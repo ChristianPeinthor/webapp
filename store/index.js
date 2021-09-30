@@ -301,9 +301,6 @@ const createStore = () => {
         })
       },
       getUser ({ state, commit, dispatch }) {
-        console.log(state)
-        console.log(commit)
-        console.log(dispatch)
         return axios.get(`${origin}/.netlify/functions/getUser`).then((r) => {
           commit('setUser', r.data)
           return dispatch('getFabman')
