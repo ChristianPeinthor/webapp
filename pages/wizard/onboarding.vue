@@ -100,11 +100,14 @@ export default {
   data () {
     return {
       loading: false,
-      steps: ['index', 'contact', 'payment', 'done', 'confirmation'],
+      steps: ['index', 'contact', 'payment', 'image', 'done', 'confirmation'],
       onboardingData: {
         paymentType: null,
         paymentFrequency: null,
         rulesAccepted: false,
+        image: null,
+        image64: null,
+        imageUrl: null,
         profile: {
           address: null,
           address2: null,
