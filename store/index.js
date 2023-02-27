@@ -49,7 +49,7 @@ const webAuth = tmpAuth
 const version = tmpVersion
 
 const baseUrl = process.env.NUXT_ENV_CONNECTOR_URL ? process.env.NUXT_ENV_CONNECTOR_URL : 'https://connector.grandgarage.eu'
-const connectorBaseUrl = baseUrl + '/api'
+const connectorBaseUrl = 'https://connector.dev.grandgarage.eu/api/v1'
 
 let connector = axios.create({
   baseURL: connectorBaseUrl,
@@ -506,6 +506,18 @@ const createStore = () => {
         return axios.get(connectorBaseUrl + '/products/materials').then((result) => {
           return result.data
         })
+      },
+      async getCategories ({ state }, data) {
+        const res = await connector.post('/firstvoucher/get-categories', data)
+        return res.data
+      },
+      async getProducts ({ state }, data) {
+        const res = await connector.post('/firstvoucher/get-products', data)
+        return res.data
+      },
+      async getVariants ({ state }, data) {
+        const res = await connector.post('/firstvoucher/get-variants', data)
+        return res.data
       },
       // @deprecated
       async startOnboarding ({ commit }, data) {

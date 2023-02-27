@@ -32,10 +32,10 @@
             <div class="info-row">
               <div class="info-block">
                 <div class="col info">
-                  {{material.external_name}}
+                  {{material.name}}
                 </div>
                 <div class="col info">
-                  {{Number(material.price).toFixed(2)}} / {{material.unit_name}}
+                  {{Number(material.cacheMaxPrice).toFixed(2)}}
                 </div>
               </div>
             </div>
@@ -63,7 +63,7 @@ export default {
     resultQuery () {
       if (this.search) {
         return this.materials.filter((m) => {
-          return m.internal_name.toLowerCase().includes(this.search.toLowerCase())
+          return m.name.toLowerCase().includes(this.search.toLowerCase())
         })
       } else {
         return this.materials
@@ -71,7 +71,63 @@ export default {
     }
   },
   async mounted () {
-    this.materials = await this.$store.dispatch('getMaterials')
+    this.Categories = await this.$store.dispatch('getCategories', {
+      filters: [{
+        filterType: 'Column',
+        value: 101379,
+        property: 'parentId',
+        type: 'eq'
+      }]
+    })
+
+    this.AllCategories = this.Categories.data
+    for (const category of this.Categories.data) {
+      const temp = await this.$store.dispatch('getCategories', {
+        filters: [{
+          filterType: 'Column',
+          value: category.id,
+          property: 'parentId',
+          type: 'eq'
+        }]
+      })
+      this.AllCategories = this.AllCategories.concat(temp.data)
+    }
+
+    console.log(this.AllCategories)
+
+    this.Products = []
+    for (const category of this.AllCategories) {
+      const temp = await this.$store.dispatch('getProducts', {
+        filters: [{
+          filterType: 'Column',
+          value: category.id,
+          property: 'categoryId',
+          type: 'eq'
+        }]
+      })
+      this.Products = this.Products.concat(temp.data)
+    }
+    console.log(this.Products)
+    this.materials = this.Products
+  },
+  methods: {
+    async recursiveCategories (parents) {
+      let categories = []
+      let total = 0
+      for (const category of parents) {
+        const temp = await this.$store.dispatch('getCategories', {
+          filters: [{
+            filterType: 'Column',
+            value: category.id,
+            property: 'parentId',
+            type: 'eq'
+          }]
+        })
+        categories = categories.concat(temp.data)
+        total = total + temp.total
+      }
+      return categories
+    }
   }
 }
 </script>
